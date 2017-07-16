@@ -1,0 +1,102 @@
+{
+  "name" : "SOLR6",
+  "label" : "Solr6",
+  "description" : "CSD Solr 6.6.0, Hello world!",
+  "version" : "6.6.0",
+  "runAs" : {
+    "user" : "cloudera",
+    "group" : "cloudera"
+  },
+  "inExpressWizard" : true,
+  "icon" : "images/solr.ico",
+  "compatibility" : {
+    "generation" : 2,
+    "cdhVersion" : {
+      "min" : 4,
+      "max" : 5
+    }
+  },
+  "parcel" : {
+    "requiredTags" : [ "solr6" ]
+  },
+  "serviceDependencies" : [
+    {
+      "name" : "HDFS",
+      "required" : "false"
+    },
+    {
+      "name" : "ZOOKEEPER",
+      "required" : "false"
+    }
+  ],
+  "rolesWithExternalLinks" : ["SOLR6_SERVER"],
+  "roles" : [
+    {
+      "name" : "SOLR6_SERVER",
+      "label" : "Solr6",
+      "pluralLabel" : "Solr6",
+      "startRunner" : {
+        "program" : "scripts/control.sh",
+        "args" : ["start"],
+        "environmentVariables" : {
+          "SOLR_PORT" : "${solr_port}",
+          "SOLR_SERVICE" : "${solr_service_name}",
+          "SOLR_USER" : "${solr_user}"
+        }
+      },
+      "externalLink" : {
+        "name" : "solr_web_ui",
+        "label" : "Solr Web UI",
+        "url" : "http://${host}:${solr_port}/solr"
+      },
+      "logging" : {
+        "dir" : "/var/solr/logs",
+        "filename" : "solr.log",
+        "modifiable" : true,
+        "loggingType" : "log4j"
+      },
+      "parameters" : [
+        {
+          "name" : "solr_port",
+          "label" : "Solr port",
+          "description" : "Solr Port number",
+          "required" : "true",
+          "type" : "port",
+          "default" : 8983,
+          "configurableInWizard" : true
+        },
+        {
+          "name" : "solr_service_name",
+          "label" : "Solr service name",
+          "description" : "Solr service name",
+          "required" : "true",
+          "type" : "string",
+          "default" : "solr",
+          "configurableInWizard" : true
+        },
+        {
+          "name" : "solr_user",
+          "label" : "Solr user",
+          "description" : "User that runs the Solr process",
+          "required" : "true",
+          "type" : "string",
+          "default" : "solr",
+          "configurableInWizard" : true
+        }
+      ]
+    }
+  ],
+  "stopRunner" : {
+    "relevantRoleTypes" : ["SOLR6_SERVER"],
+    "runner" : {
+      "program" : "scripts/control.sh",
+      "args" : ["stop"],
+      "environmentVariables" : {
+        "SOLR_PORT" : "${solr_port}",
+        "SOLR_SERVICE" : "${solr_service_name}"
+      }
+    },
+    "timeout" : 60000,
+    "masterRole" : "SOLR6_SERVER"
+  }
+}
